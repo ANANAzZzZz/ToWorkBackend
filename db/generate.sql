@@ -51,17 +51,18 @@ INSERT INTO "user" (name, email, last_name, password) VALUES
 	('admin', 'example@mail.ru', 'admin', '111111');
 	
 INSERT INTO track (name) VALUES 
-	('РѕР±СѓС‡РµРЅРёРµ РіСѓР°РїС‡РёС‡Р°');
+	('обучение гуапчича');
 	
 INSERT INTO knowledge (name, content) VALUES 
-	('С‚РѕРїРѕРІС‹Р№ knowledge', 'РѕС„РёРіРµРЅРЅС‹Р№ knowledge');
+	('топовый knowledge', 'офигенный knowledge');
 	
 INSERT INTO "module" (name, content, html, id_track) VALUES 
-	('С‚РѕРїРѕРІС‹Р№ module', 'РѕС„РёРіРµРЅРЅС‹Р№ module', '<br>', 1);
+	('топовый module', 'офигенный module', '<br>', 1);
 
 INSERT INTO user_progress (last_complete_page, page_quantity, id_user, id_track) VALUES 
 	(10, 100, 1, 1);
 	
 INSERT INTO user_with_progress (name, last_name, progress) VALUES 
 	('ivan', 'ivanov', 50);
+
 

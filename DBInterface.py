@@ -5,7 +5,8 @@ from config import Config
 
 
 class DBInterface:
-    def get_users(self):
+    @staticmethod
+    def get_all_tracks():
         with psycopg.connect(host=Config.DB_SERVER,
                              user=Config.DB_USER,
                              password=Config.DB_PASSWORD,
@@ -13,9 +14,27 @@ class DBInterface:
 
             cur = con.cursor()
 
-            cur.execute('SELECT * FROM "user"')
+            cur.execute('SELECT * FROM track')
 
-            result = cur.fetchone()
+            result = cur.fetchall()
+
+            if not result:
+                print('users not found')
+                return None
+            return result
+
+    @staticmethod
+    def get_knowledge():
+        with psycopg.connect(host=Config.DB_SERVER,
+                             user=Config.DB_USER,
+                             password=Config.DB_PASSWORD,
+                             dbname=Config.DB_NAME) as con:
+
+            cur = con.cursor()
+
+            cur.execute('SELECT * FROM knowledge')
+
+            result = cur.fetchall()
 
             if not result:
                 print('users not found')
