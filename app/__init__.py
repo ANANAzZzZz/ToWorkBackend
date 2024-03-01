@@ -1,6 +1,6 @@
 from flask import Flask
 from config import Config
-from DBInterface import DBInterface
+from db.DBInterface import DBInterface
 from flask_login import LoginManager
 
 app = Flask(__name__)
