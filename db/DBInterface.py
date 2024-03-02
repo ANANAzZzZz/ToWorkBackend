@@ -40,3 +40,39 @@ class DBInterface:
                 print('users not found')
                 return None
             return result
+
+    @staticmethod
+    def get_modules(id_track):
+        with psycopg.connect(host=Config.DB_SERVER,
+                             user=Config.DB_USER,
+                             password=Config.DB_PASSWORD,
+                             dbname=Config.DB_NAME) as con:
+
+            cur = con.cursor()
+
+            cur.execute("SELECT * FROM module WHERE id_track = %s", (id_track,))
+
+            result = cur.fetchall()
+
+            if not result:
+                print('modules not found')
+                return None
+            return result
+
+
+    @staticmethod
+    def get_users_with_progress(id):
+        with psycopg.connect(host=Config.DB_SERVER,
+                             user=Config.DB_USER,
+                             password=Config.DB_PASSWORD,
+                             dbname=Config.DB_NAME) as con:
+
+            cur = con.cursor()
+
+            cur.execute("SELECT * FROM user_with_progress WHERE id != %s", (id,))
+
+            result = cur.fetchall()
+            if not result:
+                print('users progress not found')
+                return None
+            return result
