@@ -1,5 +1,8 @@
 from app import app, db
-from flask import jsonify
+from flask import Flask, jsonify, request
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+
+jwt = JWTManager(app)
 
 
 @app.route('/tracks')
@@ -36,6 +39,7 @@ def get_all_tracks():
         knowledgeList.append(dict)
     return knowledgeList
 
+
 @app.route('/module/<int:id_track>')
 def get_modules_on_track(id_track):
     modules = db.get_modules(id_track)
@@ -59,7 +63,7 @@ def get_modules_on_track(id_track):
 
 @app.route('/users_with_progress')
 def get_users_with_progress():
-    users = db.get_users_with_progress(3) #условный id == 3, как напишем авторизацию, тут будет current_user
+    users = db.get_users_with_progress() #условный id == 3, как напишем авторизацию, тут будет current_user
 
     if not users:
         return "No available users"
@@ -76,3 +80,24 @@ def get_users_with_progress():
         users_with_progress_list.append(dict)
     return users_with_progress_list
 
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    user = db.get_login_password(username, password)
+
+    if user:
+        access_token = create_access_token(identity=username)
+        return jsonify(access_token=access_token), 200
+    else:
+        return jsonify(message='Неверные учетные данные'), 401
+
+
+@app.route('/protected', methods=['GET'])
+@jwt_required()
+def protected():
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200
