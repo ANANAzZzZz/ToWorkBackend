@@ -36,6 +36,7 @@ def get_all_tracks():
         knowledgeList.append(dict)
     return knowledgeList
 
+
 @app.route('/module/<int:id_track>')
 def get_modules_on_track(id_track):
     modules = db.get_modules(id_track)

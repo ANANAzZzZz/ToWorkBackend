@@ -37,7 +37,7 @@ class DBInterface:
             result = cur.fetchall()
 
             if not result:
-                print('users not found')
+                print('knowledge not found')
                 return None
             return result
 
@@ -58,7 +58,6 @@ class DBInterface:
                 print('modules not found')
                 return None
             return result
-
 
     @staticmethod
     def get_users_with_progress(id):
