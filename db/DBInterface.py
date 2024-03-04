@@ -75,3 +75,20 @@ class DBInterface:
                 print('users progress not found')
                 return None
             return result
+
+    @staticmethod
+    def get_login_password(name, password):
+        with psycopg.connect(host=Config.DB_SERVER,
+                             user=Config.DB_USER,
+                             password=Config.DB_PASSWORD,
+                             dbname=Config.DB_NAME) as con:
+
+            cur = con.cursor()
+
+            cur.execute("SELECT * FROM AppUser WHERE name = %s AND password = %s", (name, password))
+
+            result = cur.fetchone()
+            if not result:
+                print('user not found')
+                return None
+            return result
