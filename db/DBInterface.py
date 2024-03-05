@@ -19,7 +19,7 @@ class DBInterface:
             result = cur.fetchall()
 
             if not result:
-                print('users not found')
+                print('tracks not found')
                 return None
             return result
 
@@ -37,7 +37,7 @@ class DBInterface:
             result = cur.fetchall()
 
             if not result:
-                print('users not found')
+                print('knowledge not found')
                 return None
             return result
 
@@ -58,7 +58,6 @@ class DBInterface:
                 print('modules not found')
                 return None
             return result
-
 
     @staticmethod
     def get_users_with_progress(id):
@@ -92,4 +91,43 @@ class DBInterface:
             if not result:
                 print('user not found')
                 return None
+
+            return result
+
+    @staticmethod
+    def add_user(name, password, last_name):
+        with psycopg.connect(host=Config.DB_SERVER,
+                             user=Config.DB_USER,
+                             password=Config.DB_PASSWORD,
+                             dbname=Config.DB_NAME) as con:
+
+            cur = con.cursor()
+
+            cur.execute("INSERT INTO AppUser (name, password,last_name, progress) VALUES (%s, %s, %s, %s) RETURNING name",
+                        (name, password, last_name, 0))
+            result = cur.fetchone()
+
+            con.commit()
+
+            if not result:
+                return None
+
+            return result
+
+    @staticmethod
+    def find_user_by_email(name):
+        with psycopg.connect(host=Config.DB_SERVER,
+                             user=Config.DB_USER,
+                             password=Config.DB_PASSWORD,
+                             dbname=Config.DB_NAME) as con:
+
+            cur = con.cursor()
+
+            cur.execute("SELECT * FROM AppUser WHERE name = %s", (name,))
+
+            result = cur.fetchone()
+
+            if not result:
+                return None
+
             return result

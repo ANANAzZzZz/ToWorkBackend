@@ -1,8 +1,24 @@
 from app import app, db
-from flask import Flask, jsonify, request
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from flask import jsonify, request
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, JWTManager
 
 jwt = JWTManager(app)
+
+
+@app.route("/registration", methods=["POST"])
+def registration():
+    data = request.get_json()
+    username = data.get('name')
+    last_name = data.get('last_name')
+    password = data.get('password')
+    user = db.add_user(username,  password, last_name)
+    if user:
+        user_data = db.find_user_by_email(user[0])
+        access_token = create_access_token(identity=username)
+        return jsonify(access_token=access_token, id_user=user_data[0],
+                       name_user=user_data[1], last_name_user=user_data[2],progress_user=user_data[4]), 200
+    else:
+        return jsonify(message='Неверные учетные данные'), 401
 
 
 @app.route('/tracks')
@@ -23,6 +39,7 @@ def get_tracks():
 
 
 @app.route('/knowledge')
+@jwt_required()
 def get_all_tracks():
     knowledge = db.get_knowledge()
 
@@ -41,6 +58,7 @@ def get_all_tracks():
 
 
 @app.route('/module/<int:id_track>')
+@jwt_required()
 def get_modules_on_track(id_track):
     modules = db.get_modules(id_track)
 
@@ -63,7 +81,7 @@ def get_modules_on_track(id_track):
 
 @app.route('/users_with_progress')
 def get_users_with_progress():
-    users = db.get_users_with_progress() #условный id == 3, как напишем авторизацию, тут будет current_user
+    users = db.get_users_with_progress(0) #условный id == 3, как напишем авторизацию, тут будет current_user
 
     if not users:
         return "No available users"
@@ -84,20 +102,24 @@ def get_users_with_progress():
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-    username = data.get('username')
+    username = data.get('name')
     password = data.get('password')
 
     user = db.get_login_password(username, password)
-
     if user:
         access_token = create_access_token(identity=username)
-        return jsonify(access_token=access_token), 200
+        return jsonify(access_token=access_token, id_user=user[0],
+                       name_user=user[1], last_name_user=user[2], progress_user=user[4]), 200
     else:
         return jsonify(message='Неверные учетные данные'), 401
 
 
-@app.route('/protected', methods=['GET'])
-@jwt_required()
-def protected():
-    current_user = get_jwt_identity()
-    return jsonify(logged_in_as=current_user), 200
+# @app.route('/login_with_token', methods=['POST'])
+# @jwt_required()
+# def login_with_token():
+#     token = request.get_json()
+#
+#     return token
+# #     current_user = get_jwt_identity()
+# #     return jsonify(logged_in_as=current_user), 200
+
