@@ -43,7 +43,8 @@ CREATE TABLE page (
     content TEXT NOT NULL,
     name TEXT NOT NULL,
     numberInModule INTEGER NOT NULL,
-    idModule INTEGER NOT NULL REFERENCES "module"(id)
+    idModule INTEGER NOT NULL REFERENCES "module"(id),
+    UNIQUE (idModule,numberInModule)
 );
 
 CREATE TABLE user_progress_in_module (
@@ -64,5 +65,8 @@ CREATE TABLE userWithAchievements (
     id_user INTEGER NOT NULL REFERENCES AppUser(id),
     id_achievements INTEGER NOT NULL REFERENCES achievement(id)
 );
+
+INSERT INTO achievement(name) VALUES ('лучший гуапчич');
+INSERT INTO userWithAchievements(id_user,id_achievements) VALUES ('1','1');
 
 

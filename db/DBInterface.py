@@ -42,6 +42,28 @@ class DBInterface:
             return result
 
     @staticmethod
+    def get_pages_in_module(id_track, number_module_in_track):
+        with psycopg.connect(host=Config.DB_SERVER,
+                             user=Config.DB_USER,
+                             password=Config.DB_PASSWORD,
+                             dbname=Config.DB_NAME) as con:
+
+            cur = con.cursor()
+
+            cur.execute('SELECT id FROM "module" WHERE id_track = %s AND numberInTrack = %s',
+                        (id_track, number_module_in_track))
+
+            id_module = cur.fetchall()
+
+            cur.execute('SELECT * FROM page WHERE id_module = %s', (id_module,))
+
+            result = cur.fetchall()
+            if not result:
+                print('knowledge not found')
+                return None
+            return result
+
+    @staticmethod
     def get_modules(id_track):
         with psycopg.connect(host=Config.DB_SERVER,
                              user=Config.DB_USER,
@@ -60,6 +82,24 @@ class DBInterface:
             return result
 
     @staticmethod
+    def get_achievements(id_user):
+        with psycopg.connect(host=Config.DB_SERVER,
+                             user=Config.DB_USER,
+                             password=Config.DB_PASSWORD,
+                             dbname=Config.DB_NAME) as con:
+
+            cur = con.cursor()
+
+            cur.execute("SELECT * FROM userWithAchievements WHERE id_user = %s", (id_user,))
+
+            result = cur.fetchall()
+
+            if not result:
+                print('achievements not found')
+                return None
+            return result
+
+    @staticmethod
     def get_users_with_progress(id):
         with psycopg.connect(host=Config.DB_SERVER,
                              user=Config.DB_USER,
@@ -68,7 +108,24 @@ class DBInterface:
 
             cur = con.cursor()
 
-            cur.execute("SELECT * FROM user_with_progress WHERE id != %s", (id,))
+            cur.execute("SELECT id,progress FROM AppUser WHERE id != %s", (id,))
+
+            result = cur.fetchall()
+            if not result:
+                print('users progress not found')
+                return None
+            return result
+
+    @staticmethod
+    def get_users_with_progress_with_cc():
+        with psycopg.connect(host=Config.DB_SERVER,
+                             user=Config.DB_USER,
+                             password=Config.DB_PASSWORD,
+                             dbname=Config.DB_NAME) as con:
+
+            cur = con.cursor()
+
+            cur.execute("SELECT id,progress FROM AppUser")
 
             result = cur.fetchall()
             if not result:
