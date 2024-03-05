@@ -10,3 +10,4 @@ class Config(object):
     DB_USER = os.environ.get('DB_USER') or 'user'
     DB_NAME = os.environ.get('DB_NAME') or 'db'
     DB_PASSWORD = os.environ.get('DB_PASSWORD') or 'user'
+    DB_PORT = os.environ.get('DB_PORT') or 5432

@@ -1,6 +1,4 @@
 import psycopg
-from flask_login import current_user
-from werkzeug.security import generate_password_hash
 from config import Config
 
 
@@ -81,7 +79,8 @@ class DBInterface:
         with psycopg.connect(host=Config.DB_SERVER,
                              user=Config.DB_USER,
                              password=Config.DB_PASSWORD,
-                             dbname=Config.DB_NAME) as con:
+                             dbname=Config.DB_NAME,
+                             port=Config.DB_PORT) as con:
 
             cur = con.cursor()
 
