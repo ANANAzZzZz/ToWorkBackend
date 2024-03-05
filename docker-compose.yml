@@ -6,7 +6,7 @@ services:
     build: .
     image: ananazzz/flask-image:latest
     container_name: flask-container
-    command: flask run --host 0.0.0.0
+    command: gunicorn --bind 0.0.0.0:5000 app:app
     ports:
       - 8081:5000
     depends_on:
