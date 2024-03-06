@@ -196,7 +196,7 @@ def login():
     username = data.get('name')
     password = data.get('password')
 
-    user = db.get_login_password(username, generate_password_hash(password))
+    user = db.get_login_password(username, password)
     if user:
         expires = datetime.timedelta(hours=24)
         access_token = create_access_token(identity=user[0], expires_delta=expires)

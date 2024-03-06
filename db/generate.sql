@@ -100,6 +100,3 @@ INSERT INTO achievement (name, description, picture) VALUES ('Web Development Ex
 INSERT INTO userWithAchievements (id_user, id_achievements) VALUES (1, 1);
 INSERT INTO userWithAchievements (id_user, id_achievements) VALUES (2, 2);
 INSERT INTO userWithAchievements (id_user, id_achievements) VALUES (3, 3);
-
-
-
