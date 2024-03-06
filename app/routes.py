@@ -1,3 +1,5 @@
+from werkzeug.security import generate_password_hash
+
 from app import app, db
 from flask import jsonify, request, session
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, JWTManager, verify_jwt_in_request, \
@@ -23,8 +25,8 @@ def registration():
     password = data.get('password')
     user = db.find_user_by_email(username)
     if user:
-        return jsonify("A user with such an email already exists")
-    user = db.add_user(username,  password, last_name)
+        return jsonify("A user with such an email already exists"), 401
+    user = db.add_user(username,  generate_password_hash(password), last_name)
     if user:
         user_data = db.find_user_by_email(user[0])
         expires = datetime.timedelta(hours=24)
@@ -55,7 +57,6 @@ def get_tracks():
 
 
 @app.route('/knowledge')
-@jwt_required()
 def get_all_tracks():
     knowledge = db.get_knowledge()
 
@@ -90,7 +91,7 @@ def get_page_in_module(id_track, number_module_in_track):
             'numberInModule': p[3],
             'idModule': p[4]
         }
-    pageList.append(dict)
+        pageList.append(dict)
     return pageList
 
 
@@ -135,7 +136,7 @@ def get_achievements():
             'id_user': k[1],
             'id_achievements': k[2],
         }
-    achievementsList.append(dict)
+        achievementsList.append(dict)
     return achievementsList
 
 
@@ -143,6 +144,8 @@ def get_achievements():
 @jwt_required()
 def get_users_with_progress():
     token = request.get_json()
+    if not token:
+        return "Invalid token", 404
     x = token['headers']['Authorization']
     x = x.replace('Bearer ', '')
     id_user = get_username_from_token(x)
@@ -169,10 +172,11 @@ def login():
     data = request.get_json()
     if not data:
         return "Bad request"
-    username = request.form['username']
-    password = request.form['password']
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
 
-    user = db.get_login_password(username, password)
+    user = db.get_login_password(username, generate_password_hash(password))
     if user:
         expires = datetime.timedelta(hours=24)
         access_token = create_access_token(identity=user[0], expires_delta=expires)
@@ -193,14 +197,13 @@ def login():
 
 
 @app.route('/needRegistration', methods=['POST'])
-@jwt_required()
 def login_with_token():
     mail = request.get_json()
     result = db.find_user_by_email(mail)
 
     if not result:
-        return jsonify(message='the user was not found')
-    return jsonify(message='the user was found')
+        return jsonify(message='the user was not found'), 200
+    return jsonify(message='the user was found'), 200
 
 
 @app.route('/users_with_progress_with_cc', methods=['POST']) #current client
@@ -209,7 +212,7 @@ def get_users_with_progress_with_cc():
     users = db.get_users_with_progress_with_cc()
 
     if not users:
-        return "No available users"
+        return "No available users",200
 
     users_with_progress_list = []
     for k in users:
@@ -221,5 +224,5 @@ def get_users_with_progress_with_cc():
 
         }
         users_with_progress_list.append(dict)
-    return users_with_progress_list
+    return users_with_progress_list, 200
 
