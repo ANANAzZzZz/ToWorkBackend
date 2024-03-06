@@ -107,9 +107,12 @@ def get_modules_on_track(id_track):
         dict = {
             'id': k[0],
             'name': k[1],
-            'content': k[2],
-            'html': k[3],
-            'id_track': k[4]
+            'quantityPage': k[2],
+            'quantityCoin': k[3],
+            'startContent': k[4],
+            'endContent': k[5],
+            'numberInTrack': k[6],
+            'idTrack': k[7]
         }
         modulesList.append(dict)
     return modulesList
