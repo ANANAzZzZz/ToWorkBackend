@@ -142,6 +142,25 @@ def get_achievements():
     return achievementsList
 
 
+@app.route('/get_all_achievements')
+@jwt_required()
+def get_achievements():
+    achievements = db.get_all_achievements()
+    if not achievements:
+        return "achievements not found"
+
+    achievementsList = []
+    for k in achievements:
+        dict = {
+            'id': k[0],
+            'name': k[1],
+            'description': k[2],
+            'picture': k[3]
+        }
+        achievementsList.append(dict)
+    return achievementsList
+
+
 @app.route('/users_with_progress', methods=['POST'])
 @jwt_required()
 def get_users_with_progress():
