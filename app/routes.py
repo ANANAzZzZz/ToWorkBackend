@@ -16,9 +16,14 @@ def get_username_from_token(token):
 @app.route("/registration", methods=["POST"])
 def registration():
     data = request.get_json()
+    if not data:
+        return jsonify("Missing data"), 400
     username = data.get('name')
     last_name = data.get('last_name')
     password = data.get('password')
+    user = db.find_user_by_email(username)
+    if user:
+        return jsonify("A user with such an email already exists")
     user = db.add_user(username,  password, last_name)
     if user:
         user_data = db.find_user_by_email(user[0])
@@ -159,6 +164,9 @@ def get_users_with_progress():
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
+    if not data:
+        return "Bad request"
+
     username = data.get('name')
     password = data.get('password')
 
@@ -172,14 +180,14 @@ def login():
         return jsonify(message='Неверные учетные данные'), 401
 
 
-@app.route('/login_with_token', methods=['POST'])
-@jwt_required()
-def login_with_token():
-    token = request.get_json()
-
-    return token
-#     current_user = get_jwt_identity()
-#     return jsonify(logged_in_as=current_user), 200
+# @app.route('/login_with_token', methods=['POST'])
+# @jwt_required()
+# def login_with_token():
+#     token = request.get_json()
+#
+#     return token
+# #     current_user = get_jwt_identity()
+# #     return jsonify(logged_in_as=current_user), 200
 
 
 @app.route('/needRegistration', methods=['POST'])
@@ -193,8 +201,9 @@ def login_with_token():
     return jsonify(message='the user was found')
 
 
-@app.route('/users_with_progress_with_cc') #current client
-def get_users_with_progress():
+@app.route('/users_with_progress_with_cc', methods=['POST']) #current client
+@jwt_required()
+def get_users_with_progress_with_cc():
     users = db.get_users_with_progress_with_cc()
 
     if not users:
@@ -211,3 +220,4 @@ def get_users_with_progress():
         }
         users_with_progress_list.append(dict)
     return users_with_progress_list
+

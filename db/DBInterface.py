@@ -108,7 +108,7 @@ class DBInterface:
 
             cur = con.cursor()
 
-            cur.execute("SELECT id,progress FROM AppUser WHERE id != %s", (id,))
+            cur.execute("SELECT * FROM AppUser WHERE id != %s", (id,))
 
             result = cur.fetchall()
             if not result:
@@ -125,7 +125,7 @@ class DBInterface:
 
             cur = con.cursor()
 
-            cur.execute("SELECT id,progress FROM AppUser")
+            cur.execute("SELECT * FROM AppUser")
 
             result = cur.fetchall()
             if not result:
