@@ -56,7 +56,7 @@ def get_tracks():
 
 @app.route('/knowledge')
 @jwt_required()
-def get_all_tracks():
+def get_knowledge():
     knowledge = db.get_knowledge()
 
     if not knowledge:
@@ -90,7 +90,7 @@ def get_page_in_module(id_track, number_module_in_track):
             'numberInModule': p[3],
             'idModule': p[4]
         }
-    pageList.append(dict)
+        pageList.append(dict)
     return pageList
 
 
@@ -138,7 +138,7 @@ def get_achievements():
             'id_user': k[1],
             'id_achievements': k[2],
         }
-    achievementsList.append(dict)
+        achievementsList.append(dict)
     return achievementsList
 
 
