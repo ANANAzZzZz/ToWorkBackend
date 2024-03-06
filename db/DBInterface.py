@@ -50,12 +50,12 @@ class DBInterface:
 
             cur = con.cursor()
 
-            cur.execute('SELECT id FROM "module" WHERE id_track = %s AND numberInTrack = %s',
+            cur.execute('SELECT id FROM "module" WHERE idTrack = %s AND numberInTrack = %s',
                         (id_track, number_module_in_track))
 
-            id_module = cur.fetchall()
+            id_module = cur.fetchone()
 
-            cur.execute('SELECT * FROM page WHERE id_module = %s', (id_module,))
+            cur.execute('SELECT * FROM page WHERE idModule = %s', (id_module[0],))
 
             result = cur.fetchall()
             if not result:
@@ -73,7 +73,7 @@ class DBInterface:
 
             cur = con.cursor()
 
-            cur.execute("SELECT * FROM module WHERE id_track = %s", (id_track,))
+            cur.execute("SELECT * FROM module WHERE idTrack = %s", (id_track,))
 
             result = cur.fetchall()
 
@@ -109,7 +109,7 @@ class DBInterface:
 
             cur = con.cursor()
 
-            cur.execute("SELECT * FROM achievements")
+            cur.execute("SELECT * FROM achievement")
 
             result = cur.fetchall()
 
@@ -118,9 +118,8 @@ class DBInterface:
                 return None
             return result
 
-
     @staticmethod
-    def get_users_with_progress(id):
+    def get_users_with_progress(user_id):
         with psycopg.connect(host=Config.DB_SERVER,
                              user=Config.DB_USER,
                              password=Config.DB_PASSWORD,
@@ -128,7 +127,7 @@ class DBInterface:
 
             cur = con.cursor()
 
-            cur.execute("SELECT * FROM AppUser WHERE id != %s", (id,))
+            cur.execute("SELECT * FROM AppUser WHERE id != %s", (user_id,))
 
             result = cur.fetchall()
             if not result:
@@ -209,6 +208,50 @@ class DBInterface:
             cur.execute("SELECT * FROM AppUser WHERE name = %s", (name,))
 
             result = cur.fetchone()
+
+            if not result:
+                return None
+
+            return result
+
+    @staticmethod
+    def get_last_modules(user_id):
+        with psycopg.connect(host=Config.DB_SERVER,
+                             user=Config.DB_USER,
+                             password=Config.DB_PASSWORD,
+                             dbname=Config.DB_NAME) as con:
+
+            cur = con.cursor()
+
+            cur.execute("""
+                SELECT t1.id_module, t2.idTrack
+                FROM user_progress_in_module AS t1
+                JOIN "module" AS t2 ON t1.id_module = t2.id
+                WHERE t1.numberLastCompletePage <> t2.quantityPage AND t1.id_user = %s;
+            """, (user_id,))
+
+            result = cur.fetchall()
+
+            if not result:
+                return None
+
+            return result
+
+    @staticmethod
+    def update_number_complete_page(user_id, module_id):
+        with psycopg.connect(host=Config.DB_SERVER,
+                             user=Config.DB_USER,
+                             password=Config.DB_PASSWORD,
+                             dbname=Config.DB_NAME) as con:
+
+            cur = con.cursor()
+
+            cur.execute("UPDATE user_progress_in_module SET numberLastCompletePage = numberLastCompletePage + 1 "
+                        "WHERE id_user = %s AND id_module = %s RETURNING numberLastCompletePage" , (user_id, module_id) )
+
+            result = cur.fetchone()
+
+            con.commit()
 
             if not result:
                 return None
