@@ -1,3 +1,5 @@
+from werkzeug.security import generate_password_hash
+
 from app import app, db
 from flask import jsonify, request, session
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, JWTManager, verify_jwt_in_request, \
@@ -24,7 +26,7 @@ def registration():
     user = db.find_user_by_email(username)
     if user:
         return jsonify("A user with such an email already exists")
-    user = db.add_user(username,  password, last_name)
+    user = db.add_user(username,  generate_password_hash(password), last_name)
     if user:
         user_data = db.find_user_by_email(user[0])
         expires = datetime.timedelta(hours=24)
@@ -144,7 +146,7 @@ def get_achievements():
 
 @app.route('/get_all_achievements')
 @jwt_required()
-def get_achievements():
+def get_all_achievements():
     achievements = db.get_all_achievements()
     if not achievements:
         return "achievements not found"
@@ -191,10 +193,10 @@ def login():
     data = request.get_json()
     if not data:
         return "Bad request"
-    username = request.form['username']
-    password = request.form['password']
+    username = data.get('username')
+    password = data.get('password')
 
-    user = db.get_login_password(username, password)
+    user = db.get_login_password(username, generate_password_hash(password))
     if user:
         expires = datetime.timedelta(hours=24)
         access_token = create_access_token(identity=user[0], expires_delta=expires)
@@ -204,24 +206,28 @@ def login():
         return jsonify(message='Неверные учетные данные'), 401
 
 
-# @app.route('/login_with_token', methods=['POST'])
-# @jwt_required()
-# def login_with_token():
-#     token = request.get_json()
-#
-#     return token
-# #     current_user = get_jwt_identity()
-# #     return jsonify(logged_in_as=current_user), 200
+@app.route('/login_with_token', methods=['POST'])
+@jwt_required()
+def login_with_token():
+    token = request.get_json()
+    x = token['headers']['Authorization']
+    x = x.replace('Bearer ', '')
+    id_user = get_username_from_token(x)
+    if not id_user:
+        return jsonify(message='Bad token'), 401
+    expires = datetime.timedelta(hours=24)
+    access_token = create_access_token(identity=id_user, expires_delta=expires)
+    return access_token, 200
 
 
 @app.route('/needRegistration', methods=['POST'])
-@jwt_required()
-def login_with_token():
-    mail = request.get_json()
+def needRegistration():
+    data = request.get_json()
+    mail = data.get('name')
     result = db.find_user_by_email(mail)
 
     if not result:
-        return jsonify(message='the user was not found')
+        return jsonify(message='the user was not found'), 200
     return jsonify(message='the user was found')
 
 
