@@ -36,6 +36,7 @@ def registration():
 
 
 @app.route('/tracks')
+@jwt_required()
 def get_tracks():
     tracks = db.get_all_tracks()
 
@@ -46,7 +47,8 @@ def get_tracks():
     for track in tracks:
         dict = {
             'id': track[0],
-            'name': track[1]
+            'name': track[1],
+            'quantityModules': track[2]
         }
         tracksList.append(dict)
     return tracksList
@@ -137,7 +139,8 @@ def get_achievements():
     return achievementsList
 
 
-@app.route('/users_with_progress')
+@app.route('/users_with_progress', methods=['POST'])
+@jwt_required()
 def get_users_with_progress():
     token = request.get_json()
     x = token['headers']['Authorization']
@@ -154,7 +157,7 @@ def get_users_with_progress():
             'id': k[0],
             'name': k[1],
             'last_name': k[2],
-            'progress': k[3]
+            'progress': k[4]
 
         }
         users_with_progress_list.append(dict)
@@ -214,7 +217,7 @@ def get_users_with_progress_with_cc():
             'id': k[0],
             'name': k[1],
             'last_name': k[2],
-            'progress': k[3]
+            'progress': k[4]
 
         }
         users_with_progress_list.append(dict)
