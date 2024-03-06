@@ -100,6 +100,25 @@ class DBInterface:
             return result
 
     @staticmethod
+    def get_all_achievements():
+        with psycopg.connect(host=Config.DB_SERVER,
+                             user=Config.DB_USER,
+                             password=Config.DB_PASSWORD,
+                             dbname=Config.DB_NAME) as con:
+
+            cur = con.cursor()
+
+            cur.execute("SELECT * FROM achievements")
+
+            result = cur.fetchall()
+
+            if not result:
+                print('achievements not found')
+                return None
+            return result
+
+
+    @staticmethod
     def get_users_with_progress(id):
         with psycopg.connect(host=Config.DB_SERVER,
                              user=Config.DB_USER,
