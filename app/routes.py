@@ -193,7 +193,7 @@ def login():
     data = request.get_json()
     if not data:
         return "Bad request"
-    username = data.get('username')
+    username = data.get('name')
     password = data.get('password')
 
     user = db.get_login_password(username, generate_password_hash(password))
@@ -220,8 +220,8 @@ def login_with_token():
     return access_token, 200
 
 
-@app.route('/needRegistration', methods=['POST'])
-def needRegistration():
+@app.route('/need_registration', methods=['POST'])
+def need_registration():
     data = request.get_json()
     mail = data.get('name')
     result = db.find_user_by_email(mail)
@@ -251,3 +251,40 @@ def get_users_with_progress_with_cc():
         users_with_progress_list.append(dict)
     return users_with_progress_list
 
+
+@app.route('/get_last_modules', methods=['POST'])
+@jwt_required()
+def get_last_modules():
+    token = request.get_json()
+    x = token['headers']['Authorization']
+    x = x.replace('Bearer ', '')
+    id_user = get_username_from_token(x)
+    if not id_user:
+        return jsonify(message='bad token'), 401
+    modules = db.get_last_modules(id_user)
+    if not modules:
+        return jsonify('modules not found')
+
+    modules_list = []
+    for module in modules:
+        dict = {
+            'id_module': module[0],
+            'id_track': module[1]
+        }
+        modules_list.append(dict)
+    return modules_list
+
+
+@app.route('/update_number_complete_page/<int:id_module>', methods=['POST'])
+@jwt_required()
+def update_number_complete_page(id_module):
+    token = request.get_json()
+    x = token['headers']['Authorization']
+    x = x.replace('Bearer ', '')
+    id_user = get_username_from_token(x)
+    if not id_user:
+        return jsonify(message='bad token'), 401
+    page = db.update_number_complete_page(id_user, id_module)
+    if not page:
+        return jsonify(message='something went wrong'), 401
+    return jsonify(message='success'), 200
