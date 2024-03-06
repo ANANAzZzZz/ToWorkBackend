@@ -154,7 +154,7 @@ def get_users_with_progress():
             'id': k[0],
             'name': k[1],
             'last_name': k[2],
-            'progress': k[3]
+            'progress': k[4]
 
         }
         users_with_progress_list.append(dict)
@@ -210,7 +210,7 @@ def get_all_users_with_progress():
             'id': k[0],
             'name': k[1],
             'last_name': k[2],
-            'progress': k[3]
+            'progress': k[4]
 
         }
         users_with_progress_list.append(dict)
