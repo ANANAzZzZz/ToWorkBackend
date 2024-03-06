@@ -257,3 +257,21 @@ class DBInterface:
                 return None
 
             return result
+
+    @staticmethod
+    def find_user_by_id(id_user):
+        with psycopg.connect(host=Config.DB_SERVER,
+                             user=Config.DB_USER,
+                             password=Config.DB_PASSWORD,
+                             dbname=Config.DB_NAME) as con:
+
+            cur = con.cursor()
+
+            cur.execute("SELECT * FROM AppUser WHERE id = %s", (id_user,))
+
+            result = cur.fetchone()
+
+            if not result:
+                return None
+
+            return result

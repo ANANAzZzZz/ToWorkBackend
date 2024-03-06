@@ -210,14 +210,23 @@ def login():
 @jwt_required()
 def login_with_token():
     token = request.get_json()
+
     x = token['headers']['Authorization']
     x = x.replace('Bearer ', '')
+
     id_user = get_username_from_token(x)
+
     if not id_user:
         return jsonify(message='Bad token'), 401
+
+    user = db.find_user_by_id(id_user)
+    if not user:
+        return jsonify(message='user not found'), 401
+
     expires = datetime.timedelta(hours=24)
     access_token = create_access_token(identity=id_user, expires_delta=expires)
-    return access_token, 200
+
+    return jsonify(access_token=access_token, id_user=user[0], name_user=user[1], last_name_user=user[2], progress_user=user[4]), 200
 
 
 @app.route('/need_registration', methods=['POST'])
