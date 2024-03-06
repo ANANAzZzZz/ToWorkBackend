@@ -137,7 +137,7 @@ def get_achievements():
     return achievementsList
 
 
-@app.route('/users_with_progress')
+@app.route('/users_with_progress', methods=['POST'])
 def get_users_with_progress():
     token = request.get_json()
     x = token['headers']['Authorization']
