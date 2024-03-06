@@ -158,9 +158,8 @@ def get_users_with_progress():
 
 @app.route('/login', methods=['POST'])
 def login():
-    data = request.get_json()
-    username = data.get('name')
-    password = data.get('password')
+    username = request.form['username']
+    password = request.form['password']
 
     user = db.get_login_password(username, password)
     if user:
