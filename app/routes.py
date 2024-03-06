@@ -49,7 +49,7 @@ def get_tracks():
 
 @app.route('/knowledge')
 @jwt_required()
-def get_all_tracks():
+def get_all_knowledge():
     knowledge = db.get_knowledge()
 
     if not knowledge:
