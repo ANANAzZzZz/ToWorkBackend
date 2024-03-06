@@ -166,9 +166,8 @@ def login():
     data = request.get_json()
     if not data:
         return "Bad request"
-
-    username = data.get('name')
-    password = data.get('password')
+    username = request.form['username']
+    password = request.form['password']
 
     user = db.get_login_password(username, password)
     if user:
