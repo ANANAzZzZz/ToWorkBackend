@@ -13,11 +13,6 @@ def get_username_from_token(token):
     return username
 
 
-@app.route("/")
-def index():
-    return "this is an index page"
-
-
 @app.route("/registration", methods=["POST"])
 def registration():
     data = request.get_json()
@@ -61,7 +56,7 @@ def get_tracks():
 
 @app.route('/knowledge')
 @jwt_required()
-def get_all_knowledge():
+def get_all_tracks():
     knowledge = db.get_knowledge()
 
     if not knowledge:
@@ -197,9 +192,9 @@ def login():
 # #     return jsonify(logged_in_as=current_user), 200
 
 
-@app.route('/getUserByEmail', methods=['POST'])
+@app.route('/needRegistration', methods=['POST'])
 @jwt_required()
-def get_user_by_email():
+def login_with_token():
     mail = request.get_json()
     result = db.find_user_by_email(mail)
 
