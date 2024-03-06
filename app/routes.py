@@ -20,6 +20,7 @@ def registration():
     data = request.get_json()
     if not data:
         return jsonify("Missing data"), 400
+
     username = data.get('name')
     last_name = data.get('last_name')
     password = data.get('password')
@@ -43,7 +44,7 @@ def get_tracks():
     tracks = db.get_all_tracks()
 
     if not tracks:
-        return "No avaliable tracks"
+        return []  #"No avaliable tracks"
 
     tracksList = []
     for track in tracks:
@@ -62,7 +63,7 @@ def get_knowledge():
     knowledge = db.get_knowledge()
 
     if not knowledge:
-        return "No available knowledge"
+        return [] # "No available knowledge"
 
     knowledgeList = []
     for k in knowledge:
@@ -81,7 +82,7 @@ def get_page_in_module(id_track, number_module_in_track):
     pages = db.get_pages_in_module(id_track, number_module_in_track)
 
     if not pages:
-        return "No available pages"
+        return [] # "No available pages"
 
     pageList = []
     for p in pages:
@@ -102,7 +103,7 @@ def get_modules_on_track(id_track):
     modules = db.get_modules(id_track)
 
     if not modules:
-        return "No available modules"
+        return [] # "No available modules"
 
     modulesList = []
     for k in modules:
@@ -131,7 +132,7 @@ def get_achievements():
         return "Invalid token"
     achievements = db.get_achievements(id_user)
     if not achievements:
-        return "No available achievements"
+        return [] # "No available achievements"
 
     achievementsList = []
     for k in achievements:
@@ -149,7 +150,7 @@ def get_achievements():
 def get_all_achievements():
     achievements = db.get_all_achievements()
     if not achievements:
-        return "achievements not found"
+        return [] # "achievements not found"
 
     achievementsList = []
     for k in achievements:
@@ -173,7 +174,7 @@ def get_users_with_progress():
     users = db.get_users_with_progress(id_user)
 
     if not users:
-        return "No available users"
+        return [] # "No available users"
 
     users_with_progress_list = []
     for k in users:
@@ -246,7 +247,7 @@ def get_users_with_progress_with_cc():
     users = db.get_users_with_progress_with_cc()
 
     if not users:
-        return "No available users"
+        return [] # "No available users"
 
     users_with_progress_list = []
     for k in users:
@@ -272,7 +273,7 @@ def get_last_modules():
         return jsonify(message='bad token'), 401
     modules = db.get_last_modules(id_user)
     if not modules:
-        return jsonify('modules not found')
+        return [] # jsonify('modules not found')
 
     modules_list = []
     for module in modules:
