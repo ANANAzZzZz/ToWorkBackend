@@ -1,5 +1,6 @@
 import psycopg
 from config import Config
+from werkzeug.security import check_password_hash
 
 
 class DBInterface:
@@ -162,14 +163,19 @@ class DBInterface:
 
             cur = con.cursor()
 
-            cur.execute("SELECT * FROM AppUser WHERE name = %s AND password = %s", (name, password))
+            cur.execute("SELECT * FROM AppUser WHERE name = %s", (name,))
 
-            result = cur.fetchone()
-            if not result:
+            user = cur.fetchone()
+
+            if not user:
                 print('user not found')
                 return None
 
-            return result
+            if not check_password_hash(user[3], password):
+                print('wrong password')
+                return None
+
+            return user
 
     @staticmethod
     def add_user(name, password, last_name):

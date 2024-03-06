@@ -68,7 +68,6 @@ CREATE TABLE userWithAchievements (
     id_achievements INTEGER NOT NULL REFERENCES achievement(id)
 );
 
-INSERT INTO achievement(name) VALUES ('лучший гуапчич');
+INSERT INTO appuser(name, last_name, password, progress) VALUES ('admin', 'admin', 'pass', 50);
+INSERT INTO achievement(name, description, picture) VALUES ('лучший гуапчич', 'описание', 'picture');
 INSERT INTO userWithAchievements(id_user,id_achievements) VALUES ('1','1');
-
-
