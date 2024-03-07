@@ -279,7 +279,8 @@ def get_last_modules():
     for module in modules:
         dict = {
             'id_module': module[0],
-            'id_track': module[1]
+            'id_track': module[1],
+            'number_last_complete_page': module[2]
         }
         modules_list.append(dict)
     return modules_list

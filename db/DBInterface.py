@@ -224,7 +224,7 @@ class DBInterface:
             cur = con.cursor()
 
             cur.execute("""
-                SELECT t1.id_module, t2.idTrack
+                SELECT t1.id_module, t2.idTrack, t1.numberlastcompletepage
                 FROM user_progress_in_module AS t1
                 JOIN "module" AS t2 ON t1.id_module = t2.id
                 WHERE t1.numberLastCompletePage <> t2.quantityPage AND t1.id_user = %s;
